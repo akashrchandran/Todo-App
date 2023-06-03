@@ -62,12 +62,12 @@ def register(request):
 
 @login_required
 def index(request):
-    print(request.user.username)
     if request.method == 'POST':
         task = request.POST['task']
         date = request.POST['date']
         todo = Todo.objects.create(username=request.user.username, task=task, date=date)
         todo.save()
+        return redirect(reverse(index))
     todos = Todo.objects.filter(username=request.user.username)
     return render(request, 'index.html', {'todos': todos})
 
