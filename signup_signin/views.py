@@ -75,6 +75,9 @@ def delete_todo(request):
     if request.method == 'POST':
         request_data = json.loads(request.body)
         identifier = request_data['id']
-        todo = Todo.objects.get(id=identifier)
-        todo.delete()
-        return JsonResponse({'status': 200})
+        try:
+            todo = Todo.objects.get(id=identifier, username=request.user.username)
+            todo.delete()
+            return JsonResponse({'status': 200, 'msg': None}, status=200)
+        except Todo.DoesNotExist:
+            return JsonResponse({'status': 404, 'msg': "The todo doesn't seem to exist"}, status=404)
