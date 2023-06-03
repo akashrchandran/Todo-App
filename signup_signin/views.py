@@ -7,11 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
-from datetime import datetime, timedelta
-from django.utils.timezone import now, localtime
-import random
-import json
+from .models import Todo
 
 
 def login_view(request):
@@ -52,7 +48,7 @@ def register(request):
 
     # Attempt to create new user
     try:
-        user = User.objects.create_user(username, email, password)
+        user = User.objects.create_user(username, password=password)
         user.first_name = first_name
         user.last_name = last_name
         user.save()
@@ -65,4 +61,12 @@ def register(request):
 
 @login_required
 def index(request):
-    return HttpResponse("Hello, world. You're at the signup_signin index.")
+    print(request.user.username)
+    if request.method == 'POST':
+        task = request.POST['task']
+        date = request.POST['date']
+        todo = Todo.objects.create(username=request.user.username, task=task, date=date)
+        todo.save()
+    todos = Todo.objects.filter(username=request.user.username)
+    print(todos)
+    return render(request, 'index.html', {'todos': todos})
