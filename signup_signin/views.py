@@ -1,3 +1,4 @@
+import json
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -68,5 +69,12 @@ def index(request):
         todo = Todo.objects.create(username=request.user.username, task=task, date=date)
         todo.save()
     todos = Todo.objects.filter(username=request.user.username)
-    print(todos)
     return render(request, 'index.html', {'todos': todos})
+
+def delete_todo(request):
+    if request.method == 'POST':
+        request_data = json.loads(request.body)
+        identifier = request_data['id']
+        todo = Todo.objects.get(id=identifier)
+        todo.delete()
+        return JsonResponse({'status': 200})

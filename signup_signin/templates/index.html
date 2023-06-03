@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,11 +26,12 @@
             <td>{{ todo.task }}</td>
             <td>{{ todo.completed }}</td>
             <td>
-                <a href="/edit/{{ todo.id }}">Edit</a>
-                <a href="/delete/{{ todo.id }}">Delete</a>
+                <button data-id="{{ todo.id }}" id="edit">Edit</button>
+                <button data-id="{{ todo.id }}" id="delete">Delete</button>
             </td>
         </tr>
         {% endfor %}
     </table>
+    <script src="{% static 'script.js' %}"></script>
 </body>
 </html>
