@@ -40,7 +40,6 @@ def register(request):
     if request.method != "POST":
         return render(request, "signup.html")
     username = request.POST["username"]
-    email = request.POST["email"]
     first_name = request.POST["first_name"]
     last_name = request.POST["last_name"]
 
@@ -55,7 +54,7 @@ def register(request):
         user.save()
     except IntegrityError:
         return render(request, "signup.html", {
-            "message": "Username already taken."
+            "messages": ["Username already taken."]
         })
     login(request, user)
     return HttpResponseRedirect(reverse("index"))
