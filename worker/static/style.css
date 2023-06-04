@@ -1,0 +1,14 @@
+
+.bd-callout-danger {
+    --bd-callout-color: var(--bs-danger-text-emphasis);
+    --bd-callout-bg: var(--bs-danger-bg-subtle);
+    --bd-callout-border: var(--bs-danger-border-subtle);
+}
+.bd-callout {
+    --bs-link-color-rgb: var(--bd-callout-link);
+    --bs-code-color: var(--bd-callout-code-color);
+    padding: 1.25rem;
+    color: var(--bd-callout-color, inherit);
+    background-color: var(--bd-callout-bg, var(--bs-gray-100));
+    border-left: 0.25rem solid var(--bd-callout-border, var(--bs-gray-300));
+}

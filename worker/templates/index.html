@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+
+{% load static %}
+
+{% block content %}
+<form action="/" method="post">
+    {% csrf_token %}
+    <input type="text" name="task">
+    <input type="date" name="date" id="date">
+    <input type="submit" value="add todo">
+</form>
+<table>
+    <tr>
+        <th>Task</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    {% for todo in todos %}
+    <tr>
+        <td>{{ todo.task }}</td>
+        <td>{{ todo.completed }}</td>
+        <td>
+            <button data-id="{{ todo.id }}" id="edit">Edit</button>
+            <button data-id="{{ todo.id }}" id="delete">Delete</button>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+<script src="{% static 'script.js' %}"></script>
+{% endblock %}
