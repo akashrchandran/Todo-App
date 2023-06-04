@@ -1,3 +1,4 @@
+import datetime
 import json
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
@@ -67,16 +68,33 @@ def index(request):
         todo = Todo.objects.create(username=request.user.username, task=task, date=date)
         todo.save()
         return redirect(reverse(index))
-    todos = Todo.objects.filter(username=request.user.username)
-    return render(request, 'index.html', {'todos': todos})
+    completed = Todo.objects.filter(username=request.user.username, completed=True)
+    todos = Todo.objects.filter(username=request.user.username, completed=False)
+    expired = Todo.objects.filter(username=request.user.username, completed=False, date__lt=datetime.date.today())
+    return render(request, 'index.html', {'todos': todos, 'completed': completed, 'expired': expired})
 
-def delete_todo(request):
+@login_required
+def delete_todo(request, identifier):
     if request.method == 'POST':
-        request_data = json.loads(request.body)
-        identifier = request_data['id']
         try:
             todo = Todo.objects.get(id=identifier, username=request.user.username)
             todo.delete()
-            return JsonResponse({'status': 200, 'msg': None}, status=200)
+            return redirect(reverse(index))
         except Todo.DoesNotExist:
             return JsonResponse({'status': 404, 'msg': "The todo doesn't seem to exist"}, status=404)
+    else:
+        redirect(reverse(index))
+        
+@login_required
+def update_todo(request, identifier):
+    if request.method == 'POST':
+        try:
+            todo = Todo.objects.get(id=identifier, username=request.user.username)
+            todo.task = request.POST['task']
+            todo.date = request.POST['date']
+            todo.save()
+            return redirect(reverse(index))
+        except Todo.DoesNotExist:
+            return JsonResponse({'status': 404, 'msg': "The todo doesn't seem to exist"}, status=404)
+    else:
+        redirect(reverse(index))
