@@ -3,28 +3,117 @@
 {% load static %}
 
 {% block content %}
-<form action="/" method="post">
-    {% csrf_token %}
-    <input type="text" name="task">
-    <input type="date" name="date" id="date">
-    <input type="submit" value="add todo">
-</form>
-<table>
-    <tr>
-        <th>Task</th>
-        <th>Status</th>
-        <th>Actions</th>
-    </tr>
-    {% for todo in todos %}
-    <tr>
-        <td>{{ todo.task }}</td>
-        <td>{{ todo.completed }}</td>
-        <td>
-            <button data-id="{{ todo.id }}" id="edit">Edit</button>
-            <button data-id="{{ todo.id }}" id="delete">Delete</button>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
-<script src="{% static 'script.js' %}"></script>
+<section class="vh-100">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col col-xl-10">
+                <div class="card"  style="background-color: whitesmoke;">
+                    <div class="card-body p-5">
+                        <form class="d-flex flex-column flex-sm-row justify-content-between align-items-center mb-4">
+                            <div class="col-6 form-floating mb-3">
+                                <input type="text" class="form-control form-control-sm w-100" id="task" name="task"
+                                    placeholder="New  task..." required>
+                                <label for="task">New task...</label>
+                            </div>
+                            <div class="col-4 form-floating mb-3">
+                                <input type="date" class="form-control form-control-sm" id="task" name="task"
+                                    placeholder="New  task..." required>
+                                <label for="task">Expected Completion Date</label>
+                            </div>
+                            <button type="submit" class="btn btn-info btn-lg ms-2">Add</button>
+                        </form>
+
+                        <!-- Tabs navs -->
+                        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="pills-all-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-all" type="button" role="tab" aria-controls="pills-all"
+                                    aria-selected="true">All</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="pills-active-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-active" type="button" role="tab" aria-controls="pills-active"
+                                    aria-selected="false">Active</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="pills-completed-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-completed" type="button" role="tab"
+                                    aria-controls="pills-completed" aria-selected="false">Completed</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="pills-expired-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-expired" type="button" role="tab"
+                                    aria-controls="pills-expired" aria-selected="false">Expired</button>
+                            </li>
+                        </ul>
+                        <!-- Tabs navs -->
+
+                        <!-- Tabs content -->
+                        <div class="tab-content" id="pills-tabContent">
+                            <div class="tab-pane fade show active" id="pills-all" role="tabpanel"
+                                aria-labelledby="pills-all-tab" tabindex="0">
+                                <ul class="list-group mb-0">
+                                    <li
+                                        class="list-group-item d-flex align-items-center justify-content-between border-0 mb-2 rounded text-bg-secondary">
+                                        Cras justo odio
+                                        <div class="d-flex align-items-center">
+                                            <button type="button" class="btn btn-success btn-sm me-2">
+                                                <i class="bi bi-check2-all"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-primary btn-sm me-2">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-danger btn-sm">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </li>
+                                    <li
+                                        class="list-group-item d-flex align-items-center justify-content-between border-0 mb-2 rounded text-bg-success">
+                                        <s>Cras justo odio</s>
+                                        <div class="d-flex align-items-center">
+                                            <button type="button" class="btn btn-warning btn-sm me-2">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-primary btn-sm me-2">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-danger btn-sm">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </li>
+                                    <li
+                                        class="list-group-item d-flex align-items-center justify-content-between border-0 mb-2 rounded text-bg-danger">
+                                        Cras justo odio
+                                        <div class="d-flex align-items-center">
+                                            <button type="button" class="btn btn-secondary btn-sm me-2" title="Disabled" disabled>
+                                                <i class="bi bi-exclamation-lg"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-primary btn-sm me-2">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-warning btn-sm">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div class="tab-pane fade" id="pills-active" role="tabpanel"
+                                aria-labelledby="pills-active-tab" tabindex="0">...</div>
+                            <div class="tab-pane fade" id="pills-completed" role="tabpanel"
+                                aria-labelledby="pills-completed-tab" tabindex="0">...</div>
+                            <div class="tab-pane fade" id="pills-expired" role="tabpanel"
+                                aria-labelledby="pills-expired-tab" tabindex="0">...</div>
+                        </div>
+                        <!-- Tabs content -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- <script src="{% static 'script.js' %}"></script> -->
 {% endblock %}
