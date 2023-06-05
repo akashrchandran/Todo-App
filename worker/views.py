@@ -65,35 +65,53 @@ def index(request):
     if request.method == 'POST':
         task = request.POST['task']
         date = request.POST['date']
+        print(date)
         todo = Todo.objects.create(username=request.user.username, task=task, date=date)
         todo.save()
         return redirect(reverse(index))
     completed = Todo.objects.filter(username=request.user.username, completed=True)
-    todos = Todo.objects.filter(username=request.user.username, completed=False)
+    todos = Todo.objects.filter(username=request.user.username, completed=False, date__gte=datetime.date.today())
     expired = Todo.objects.filter(username=request.user.username, completed=False, date__lt=datetime.date.today())
-    return render(request, 'index.html', {'todos': todos, 'completed': completed, 'expired': expired})
+    return render(request, 'index.html', {'todos': todos, 'completed': completed, 'expired': expired, 'first_name': request.user.first_name, 'last_name': request.user.last_name})
 
 @login_required
+@csrf_exempt
 def delete_todo(request, identifier):
     if request.method == 'POST':
         try:
             todo = Todo.objects.get(id=identifier, username=request.user.username)
             todo.delete()
-            return redirect(reverse(index))
+            return JsonResponse({'status': 200, 'msg': "Todo deleted"}, status=200)
         except Todo.DoesNotExist:
             return JsonResponse({'status': 404, 'msg': "The todo doesn't seem to exist"}, status=404)
     else:
         redirect(reverse(index))
         
 @login_required
+@csrf_exempt
 def update_todo(request, identifier):
     if request.method == 'POST':
         try:
+            body = json.loads(request.body)
             todo = Todo.objects.get(id=identifier, username=request.user.username)
-            todo.task = request.POST['task']
-            todo.date = request.POST['date']
+            todo.task = body['updatedTask']
+            todo.date = body['updatedDate']
             todo.save()
-            return redirect(reverse(index))
+            return JsonResponse({'status': 200, 'msg': "Todo updated"}, status=200)
+        except Todo.DoesNotExist:
+            return JsonResponse({'status': 404, 'msg': "The todo doesn't seem to exist"}, status=404)
+    else:
+        redirect(reverse(index))
+
+@login_required
+@csrf_exempt
+def toggle_complete_todo(request, identifier):
+    if request.method == 'POST':
+        try:
+            todo = Todo.objects.get(id=identifier, username=request.user.username)
+            todo.completed = not todo.completed
+            todo.save()
+            return JsonResponse({'status': 200, 'msg': "Todo completed"}, status=200)
         except Todo.DoesNotExist:
             return JsonResponse({'status': 404, 'msg': "The todo doesn't seem to exist"}, status=404)
     else:
